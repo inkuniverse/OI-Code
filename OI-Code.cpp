@@ -1,53 +1,43 @@
-#define _CRT_SECURE_NO_WARNINGS // 谔谔
+//金明的预算方案
 #include<iostream>
 #include<algorithm>
 #include<cstdio>
 #include<cstring>
+#include<vector>
+
+const int maxn = 32010,maxm = 70;
 using namespace std;
-
-const int maxm = 110,inf = 1e9+7;
-
-
-//先考虑dp.
-int stones[maxm], w[maxm*maxm],f[maxm * maxm];//[maxm * maxm]:小小优化，石头之间隔>100没有意义，缩短！
-
-int S, T, m;
-
+int n,m,v,p,q,f[maxn];
+pair<int,int> a[maxm];
+vector<pair<int,int> > G[maxm];
 int main(void)
 {
-    scanf("%*d%d%d%d", &S, &T, &m);
-    for (int i = 0; i < m; i++)scanf("%d", stones + i);
-    if (S == T)
+    cin >> m >> n;
+    for(int i = 1; i <= n;i++)
     {
-        int res = 0;
-        for (int i = 0; i < m; i++)
-            if (stones[i] % S == 0)res++;
-        printf("%d", res); 
-        return 0;
+        scanf("%d%d%d",&v,&p,&q);
+        p *= v;
+        if(q)G[q].push_back({v,p});
+        else a[i] = {v,p};
     }
-    sort(stones, stones + m);
-    int last = 0, k = 0;
-
-    //构造图
-    for (int i = 0; i < m; i++)
-    {
-        //stones[i] - last = 100 => last = stones[i] - 100;
-        if(stones[i] - last > 100)last = stones[i] - 100;
-        for (int j = 0; j < stones[i] - last; j++)w[++k] = 0;
-        w[k] = 1;
-        last = stones[i];
-    }
-    //开始dp
-    for (int i = 1; i <= k + 10; i++)
-    {
-        f[i] = inf;
-        for (int j = S; j <= T; j++)
-            if (i - j >= 0)
-                f[i] = min(f[i], f[i - j] + w[i]);
-    }
-
-    int res = inf;
-    for (int i = k; i <= k + 10; i++) res = min(res, f[i]);
-    printf("%d\n", res);
-	return 0;
+    
+    for (int i = 1; i <= n; i ++ )
+        for (int j = m; j >= 0; j--)
+        {
+            if (!a[i].first) continue;
+            for (int k = 0; k < 1 << G[i].size(); k++)//神奇的二进制枚举
+            {
+                int v = a[i].first, w = a[i].second;
+                for (int u = 0; u < G[i].size(); u++)
+                    if (k >> u & 1)
+                    {
+                        v += G[i][u].first;
+                        w += G[i][u].second;
+                    }
+                if (j >= v) f[j] = max(f[j], f[j - v] + w);
+            }
+        }
+ 
+    printf("%d\n", f[m]);
+    return 0;
 }
