@@ -1,21 +1,29 @@
-#include<iostream>
-#include<cmath> //abs
+#include <iostream>
+#include <algorithm>
+  
 using namespace std;
-string str; int sum,cnt;char c;
-int main(void)
+  
+int main()
 {
-	cin>>str;
-	for(int i = 0;i < str.size()-1;i++)
-		if(str[i] != '-')
-			sum += (str[i]-48)*(++cnt);
-	sum %= 11;
-	if(sum < 10)c = sum+48;
-	else c='X';
-	if(c == str.back())puts("Right");
-	else 
-	{
-		str.back()=c;
-		cout<<str<<endl;
-	}
-	return 0;
+    int n;
+    cin >> n;
+  
+    bool is_first = true;
+    for (int i = n; i >= 0; i -- )
+    {
+        int a;
+        cin >> a;
+  
+        if (!a) continue;
+  
+        if (!is_first && a > 0) printf("+");
+        else if (a < 0) printf("-");
+        if (abs(a) != 1 || !i) printf("%d", abs(a));
+        if (i) printf("x");
+        if (i > 1) printf("^%d", i);
+  
+        is_first = false;
+    }
+  
+    return 0;
 }
