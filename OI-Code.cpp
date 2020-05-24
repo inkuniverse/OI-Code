@@ -1,22 +1,45 @@
-//回文日期
-#include <iostream>
-#include <algorithm>
-#include <cstdio>
+#include<bits/stdc++.h>
 using namespace std;
-int ts[] = {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}, b, e, ans = 0;
+const int maxn = 81;
+
+inline int read() 
+{
+    int X=0,w=1;
+    char ch=getchar();
+    while(ch<'0' || ch>'9') {if(ch=='-') w=-1;ch=getchar();}
+    while(ch>='0' && ch<='9') X=(X<<3)+(X<<1)+ch-'0',ch=getchar();
+    return X*w;
+}
+
+int n,m;
+int num[maxn];
+__int128 ans,p[maxn],f[maxn][maxn];
+
+__int128 dp(int L,int R)
+{
+    if(f[L][R]!=-1) return f[L][R];
+    if(R-L>=1) f[L][R]=max(num[L]*p[m-R+L]+dp(L+1,R),dp(L,R-1)+num[R]*p[m-R+L]);
+    else f[L][R]=num[L]*p[m-R+L];
+    return f[L][R];
+}
+
+void print(__int128 x)
+{
+    if(x > 9) print(x/10);
+    putchar(x%10+'0');
+}
+
 int main()
 {
-    cin >> b >> e;
-    for (int i = 1; i <= 12; i++)
+    n = read();m = read();
+    p[0]=1;
+    for(int i=1;i<=m;i++) p[i]=p[i-1]*2;
+    for(int i=1;i<=n;i++)
     {
-        for (int j = 1; j <= ts[i]; j++)
-        {
-            int A = j % 10, B = j / 10, C = i % 10, D = i / 10;
-            int date = A + B * 10 + C * 100 + D * 1000 + D * 10000 + C * 100000 + B * 1000000 + A * 10000000;
-            if (date >= b && date <= e)
-                ans++;
-        }
+        for(int j=1;j<=m;j++) num[j] = read();
+        memset(f,-1,sizeof(f));
+        ans+=dp(1,m);
     }
-    cout << ans;
+    print(ans);
     return 0;
 }
