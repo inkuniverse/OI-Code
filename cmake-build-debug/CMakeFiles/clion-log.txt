@@ -1,7 +1,0 @@
-C:\Users\凌海逸\AppData\Local\JetBrains\CLion2020.1\cygwin_cmake\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /cygdrive/e/cpps/OI-code
-CMake Error: Could not find CMAKE_ROOT !!!
-CMake has most likely not been installed correctly.
-Modules directory not found in
-
-CMake Error: Error executing cmake::LoadCache(). Aborting.
-

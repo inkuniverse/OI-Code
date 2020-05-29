@@ -3,4 +3,4 @@ project(OI_Code)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(OI_Code main.cpp)
+add_executable(OI_Code OI-Code.cpp)
