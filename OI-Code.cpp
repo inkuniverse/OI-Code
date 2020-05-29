@@ -1,27 +1,17 @@
-#include <iostream>
-#include <algorithm>
-
+#include<iostream>
+#include<algorithm>
 using namespace std;
-
-int main()
+int a[1010],n;
+int main(void)
 {
-	int n;
-	bool isf = true;
-	cin >> n;
-	for (int i = n; i >= 0; i -- )
+	cin>>n;
+	for(int i = 0;i < n;i++)
 	{
-		int a;
-		cin >> a;
-		if(a)
-		{
-			if (!isf && a > 0) printf("+");
-			else if (a < 0) printf("-");
-			if (abs(a) != 1 || !i) printf("%d", abs(a));
-			if (i) printf("x");
-			if (i > 1) printf("^%d", i);
-			isf = false;
-		}
+		int b;cin>>b;
+		a[b] = 1;
 	}
-
+	cout<<count(a,a+1010,1)<<endl;
+	for(int i = 0;i < 1010;i++)
+		if(a[i])cout<<i<<' ';
 	return 0;
 }
