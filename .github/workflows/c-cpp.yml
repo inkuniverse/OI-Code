@@ -2,20 +2,18 @@ name: C/C++ CI
 
 on:
   push:
-  branches: [ master ]
+    branches: [ master ]
   pull_request:
-  branches: [ master ]
+    branches: [ master ]
 
 jobs:
   build:
 
-  runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-  steps:
-  - uses: actions/checkout@v2
-  - name: build
-    run: g++ ./OI-Code.cpp -o OI-Code
-  - name: check
-    run: ls
-  - name: ubuntu 
-    run: ls -l
+    steps:
+    - uses: actions/checkout@v2
+    - name: build
+      run: g++ ./OI-Code.cpp -o OI-Code
+    - name: check
+      run: ls
