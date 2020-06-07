@@ -15,5 +15,3 @@ jobs:
     - uses: actions/checkout@v2
     - name: build
       run: g++ ./OI-Code.cpp -o OI-Code
-    - name: mv
-      run: cp ./OI-Code /usr/local/bin
