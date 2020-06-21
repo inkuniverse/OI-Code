@@ -1,39 +1,16 @@
 #include<iostream>
-#include<algorithm>
-#include<vector>
+#include<cstdio>
 using namespace std;
-const int maxn = 500010;
-int n,a[maxn],f[maxn],g[maxn],s[maxn];
-//f[i]表示遍历时间+子树所有居民装好电脑的时间
-//g[i]表示遍历时间
-vector<int> G[maxn];
-
-void dfs(int u,int fa)
-{
-	if(u != 1)f[u] = a[u];
-	for(auto v:G[u])if(v != fa)dfs(v,u);
-	int cnt = 0;
-	for(auto v:G[u])if(v != fa)s[cnt++] = v;//保存儿子
-	sort(s+1,s+cnt+1,[](int a,int b){return f[a]-g[a] > f[b]-g[b];});
-	for(int i = 1;i <= cnt;i++)
-	{
-		f[u] = max(f[u],f[s[i]]+g[u]+1);
-		g[u] += g[s[i]] + 2;//更新g[]
-	}
-}
+const int maxn = 1010;
+int n,m,dp[maxn];
 int main(void)
 {
-	scanf("%d",&n);
-	for(int i = 1;i <= n;i++)
-		scanf("%d",a + i);
-	for(int i = 1;i < n;i++)
+	cin>>n>>m;
+	for(int i = 0;i < n;i++)
 	{
-		int u,v;
-		scanf("%d%d",&u,&v);
-		G[u].push_back(v);
-		G[v].push_back(u);
+		int v,w;
+		cin>>v>>w;
+		for(int j = m;j >= v;j--)dp[j] = max(dp[j],dp[j-v]+w);
 	}
-	dfs(1,-1);//g[1]+a[1]是特判
-	printf("%d",max(f[1],g[1]+a[1]));
-	return 0;
+	cout<<dp[m];
 }
