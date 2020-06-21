@@ -1,56 +1,39 @@
-#include <cstdio>
-#include <cstring>
-#include <iostream>
-#include <algorithm>
-#include <vector>
-#include <stack>
-#include <map>
-
+#include<iostream>
+#include<algorithm>
+#include<vector>
 using namespace std;
+const int maxn = 500010;
+int n,a[maxn],f[maxn],g[maxn],s[maxn];
+//f[i]表示遍历时间+子树所有居民装好电脑的时间
+//g[i]表示遍历时间
+vector<int> G[maxn];
 
-const int N = 100010, mod = 10007;
-
-stack<char> sOper;
-stack<vector<int>> sNumber;
-
-void eval()
+void dfs(int u,int fa)
 {
-    auto c = sOper.top(); sOper.pop();
-    auto a = sNumber.top(); sNumber.pop();
-    auto b = sNumber.top(); sNumber.pop();
-
-    if (c == '+') sNumber.push({ a[0] * b[0] % mod, (a[0] * b[1] + a[1] * b[0] + a[1] * b[1]) % mod });
-    else sNumber.push({(a[0] * b[0] + a[0] * b[1] + a[1] * b[0]) % mod, a[1] * b[1] % mod});
+	if(u != 1)f[u] = a[u];
+	for(auto v:G[u])if(v != fa)dfs(v,u);
+	int cnt = 0;
+	for(auto v:G[u])if(v != fa)s[cnt++] = v;//保存儿子
+	sort(s+1,s+cnt+1,[](int a,int b){return f[a]-g[a] > f[b]-g[b];});
+	for(int i = 1;i <= cnt;i++)
+	{
+		f[u] = max(f[u],f[s[i]]+g[u]+1);
+		g[u] += g[s[i]] + 2;//更新g[]
+	}
 }
-
-int main()
+int main(void)
 {
-    int n;
-    string expr;
-    cin >> n >> expr;
-
-    map<char, int> pr;
-    pr['('] = 0, pr['+'] = 1, pr['*'] = 2;//优先级
-
-    sNumber.push({ 1, 1 });
-    for (auto c : expr)
-    {
-        if (c == '(') sOper.push(c);
-        else if (c == '+' || c == '*')
-        {
-            while (!sOper.empty() && pr[sOper.top()] >= pr[c]) eval();
-            sNumber.push({ 1, 1 });
-            sOper.push(c);
-        }
-        else
-        {
-            while (sOper.top() != '(') eval();
-            sOper.pop();
-        }
-    }
-
-    while (!sOper.empty()) eval();//继续操作直到空
-    cout << sNumber.top()[0] << endl;
-
-    return 0;
+	scanf("%d",&n);
+	for(int i = 1;i <= n;i++)
+		scanf("%d",a + i);
+	for(int i = 1;i < n;i++)
+	{
+		int u,v;
+		scanf("%d%d",&u,&v);
+		G[u].push_back(v);
+		G[v].push_back(u);
+	}
+	dfs(1,-1);//g[1]+a[1]是特判
+	printf("%d",max(f[1],g[1]+a[1]));
+	return 0;
 }
