@@ -1,31 +1,40 @@
 #include <iostream>
+#include <vector>
 #include <algorithm>
-#include <cstring>
 using namespace std;
-const int maxn = 110;
-int f[25100], T, n, a[maxn];
-int ans;
+const int maxn = 5050;
+int n, m, cnt;
+vector<int> G[maxn];
+int a[maxn];
+void dfs(int root, int fa,int iu,int iv)//iu,iv为被删的边
+{
+    if(cnt == n)return;
+    a[cnt++] = root;
+    if(cnt == n)return;
+    sort(G[root].begin(), G[root].end());
+    for (auto i : G[root])
+        if (i != fa)
+        {
+            dfs(i,root,iu,iv);
+        }
+};
 int main(void)
 {
-    scanf("%d", &T);
-    while (T--)
+    scanf("%d%d", &n, &m);
+    for (int i = 1; i <= m; i++)
     {
-        memset(f,0,sizeof f);
-
-        ans = 0;
-        scanf("%d", &n);
-        for (int i = 1; i <= n; i++)
+        int u, v;
+        cin >> u >> v;
+        G[u].push_back(v);
+        G[v].push_back(u); //无向图
+    }
+    if (m == n - 1)
+    {
+        dfs(1,-1,-1,-1);
+        for(int i = 0;i < n;i++)
         {
-            scanf("%d", a + i);
-            f[a[i]] = 2;
+            printf("%d ",a[i]);
         }
-        sort(a+1,a+n+1);
-        for(int i = 1;i <= a[n];i++)
-            if(f[i] > 0) for(int j = 1;j <= n;j++)
-                if(i + a[j] <= a[n])f[i+a[j]] = 1; else break;
-        
-        for(int i = 1;i <= a[n];i++)
-            if(f[i] == 2)ans++;
-        cout<<ans<<endl;
+        cnt = 0;
     }
 }
