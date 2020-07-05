@@ -17,3 +17,7 @@ jobs:
       run: g++ ./OI-Code.cpp -o OI-Code
     - name: check
       run: ls
+    - name: gengreate airfrats
+      id: get_package
+      run: |
+        echo ::set-output name=NAME::$(basename OI-Code)

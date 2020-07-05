@@ -1,28 +1,31 @@
-/*
-* by 墨宇
-* https://ac.nowcoder.com/acm/contest/294/A
-* 算法：贪心
-*/
-#include<iostream>
+#include <iostream>
+#include <algorithm>
+#include <cstring>
 using namespace std;
-int n,a[100001],f[100001],ans;//a[]指原始下陷值，f[]指当前剩多少下陷值
-int main()
+const int maxn = 110;
+int f[25100], T, n, a[maxn];
+int ans;
+int main(void)
 {
-    cin>>n;
-    for(int i=1;i<=n;i++)
+    scanf("%d", &T);
+    while (T--)
     {
-        cin>>a[i];
-        f[i]=a[i];//先一个一个填
+        memset(f,0,sizeof f);
+
+        ans = 0;
+        scanf("%d", &n);
+        for (int i = 1; i <= n; i++)
+        {
+            scanf("%d", a + i);
+            f[a[i]] = 2;
+        }
+        sort(a+1,a+n+1);
+        for(int i = 1;i <= a[n];i++)
+            if(f[i] > 0) for(int j = 1;j <= n;j++)
+                if(i + a[j] <= a[n])f[i+a[j]] = 1; else break;
+        
+        for(int i = 1;i <= a[n];i++)
+            if(f[i] == 2)ans++;
+        cout<<ans<<endl;
     }
-    for(int i=1;i<=n;i++)
-    {
-        if(a[i]>=a[i-1]) f[i]-=a[i-1];//将d(i)的一些操作在d(i-1)的操作里一起完成，偷点懒
-        else f[i]=0; //可以完全填平
-    }
-    for(int i=1;i<=n;i++)
-    {
-        ans+=f[i];
-    }
-    cout<<ans;
-    return 0;
 }
