@@ -1,37 +1,28 @@
-#include<bits/stdc++.h>
-
+/*
+* by 墨宇
+* https://ac.nowcoder.com/acm/contest/294/A
+* 算法：贪心
+*/
+#include<iostream>
 using namespace std;
-const int maxn = 1e6+10;
-int a[maxn];
-int st[maxn][20], n ,m,l,r;//st[i][j] := min(st[i...i+2^(j-1]);
-int lg2[maxn];
-void init(void)
-{
-	for (int i = 1; i <= n; i++)
-		st[i][0] = a[i];
-	for (int j = 1; (1 << j) <= n; j++)
-		for (int i = 1; i + (1 << j) - 1 <= n; i++)
-			st[i][j] = max(st[i][j - 1] , st[i + (1 << j - 1)][j - 1]);
-	lg2[1] = 0;
-	lg2[2] = 1;
-	for(int i = 3;i < maxn;i++)
-		lg2[i] = lg2[i/2] + 1;
-}
-int search(int l, int r)
-{
-	//int k = log2(r - l + 1);
-	int k = lg2[r-l+1];
-	return max(st[l][k], st[r - (1 << k) + 1][k]);
-}
+int n,a[100001],f[100001],ans;//a[]指原始下陷值，f[]指当前剩多少下陷值
 int main()
 {
-	scanf("%d%d",&n,&m);
-    for(int i = 1 ;i <= n;i++)
-        scanf("%d",a+i);
-    init();
-    for(int i = 0;i < m;i++)
+    cin>>n;
+    for(int i=1;i<=n;i++)
     {
-        scanf("%d%d",&l,&r);
-        printf("%d\n",search(l,r));
+        cin>>a[i];
+        f[i]=a[i];//先一个一个填
     }
+    for(int i=1;i<=n;i++)
+    {
+        if(a[i]>=a[i-1]) f[i]-=a[i-1];//将d(i)的一些操作在d(i-1)的操作里一起完成，偷点懒
+        else f[i]=0; //可以完全填平
+    }
+    for(int i=1;i<=n;i++)
+    {
+        ans+=f[i];
+    }
+    cout<<ans;
+    return 0;
 }
