@@ -17,5 +17,8 @@ jobs:
       run: g++ ./OI-Code.cpp -o OI-Code
     - name: check
       run: ls
-    artifacts:
-    - path: ./OI-Code
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2
+      with: 
+        name: OI-Code
+        path: ./OI-Code
