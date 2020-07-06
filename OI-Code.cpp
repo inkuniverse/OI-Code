@@ -1,40 +1,127 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <cstdio>
+#include <cstring>
 #include <iostream>
 #include <vector>
 #include <algorithm>
+
+const int maxn = 5005;
 using namespace std;
-const int maxn = 5050;
-int n, m, cnt;
-vector<int> G[maxn];
-int a[maxn];
-void dfs(int root, int fa,int iu,int iv)//iu,iv为被删的边
+
+int cnt;
+int head[maxn];
+struct edge
 {
-    if(cnt == n)return;
-    a[cnt++] = root;
-    if(cnt == n)return;
-    sort(G[root].begin(), G[root].end());
-    for (auto i : G[root])
-        if (i != fa)
-        {
-            dfs(i,root,iu,iv);
-        }
-};
-int main(void)
+    int u, v, next;
+} e[maxn << 1];
+
+void add(int u, int v)
 {
+    e[++cnt].u = u;
+    e[cnt].v = v;
+    e[cnt].next = head[u];
+    head[u] = cnt;
+}
+
+vector<int> vec[maxn];
+
+int n, m;
+int ans[maxn];
+int k[maxn];
+
+int x, y;
+int dep;
+bool vis[maxn];
+
+void dfs(int u, int fa)
+{
+    if (vis[u])
+        return;
+    vis[u] = 1;
+    k[++dep] = u;
+    for (int i = 0; i < vec[u].size(); i++)
+    {
+        int v = vec[u][i];
+        if (v == fa)
+            continue;
+        if ((v == y && u == x) || (v == x && u == y))
+            continue;
+        dfs(v, u);
+    }
+}
+
+bool check()
+{
+    for (int i = 1; i <= n; i++)
+    {
+        if (k[i] == ans[i])
+            continue;
+        if (k[i] > ans[i])
+            return false;
+        else
+            return true;
+    }
+}
+
+void change()
+{
+    for (int i = 1; i <= n; i++)
+        ans[i] = k[i];
+}
+
+void dfs2(int u, int fa)
+{
+    if (vis[u])
+        return;
+    vis[u] = 1;
+    ans[++dep] = u;
+    for (int i = 0; i < vec[u].size(); i++)
+    {
+        int v = vec[u][i];
+        if (v == fa)
+            continue;
+        dfs2(v, u);
+    }
+}
+
+int main()
+{
+    int u, v;
     scanf("%d%d", &n, &m);
     for (int i = 1; i <= m; i++)
     {
-        int u, v;
-        cin >> u >> v;
-        G[u].push_back(v);
-        G[v].push_back(u); //无向图
+        scanf("%d%d", &u, &v);
+        vec[u].push_back(v);
+        vec[v].push_back(u);
+        add(u, v);
+        add(v, u);//其实存边，顺手链式前向星
     }
-    if (m == n - 1)
+    for (int i = 1; i <= n; i++)
+        sort(vec[i].begin(), vec[i].end());
+    if (n == m)
     {
-        dfs(1,-1,-1,-1);
-        for(int i = 0;i < n;i++)
+        for (int i = 1; i <= cnt; i += 2)//if cnt++ := i=0
         {
-            printf("%d ",a[i]);
+            dep = 0;
+            x = e[i].u;
+            y = e[i].v;
+            memset(vis, 0, sizeof(vis));
+            dfs(1, -1);
+            if (dep < n)
+                continue;
+            if (ans[1] == 0)
+                change();
+            else if (check())
+                change();
         }
-        cnt = 0;
+        for (int i = 1; i <= n; i++)
+            printf("%d ", ans[i]);
     }
+    else
+    {
+        dfs2(1, -1);
+        for (int i = 1; i <= n; i++)
+            printf("%d ", ans[i]);
+    }
+    return 0;
 }
