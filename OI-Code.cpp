@@ -1,46 +1,31 @@
-#include<cstring>
-#include<iostream>
-#include<algorithm>
-#include<cstdio>
-using namespace std;
-const int maxn = 1010,inf = 1e9+7;
-int a[maxn][maxn],n,m,ans = 1e9+7;//1 ºì 2 »Æ
-int rxz[maxn][maxn];
-int fx[4] = {-1, 0, 1, 0}; // xÆ«ÒÆÁ¿
-int fy[4] = {0, -1, 0, 1}; // yÆ«ÒÆÁ¿
-void dfs(int x,int y,int sum,bool mag)
+#include <cstdio>
+#include <algorithm>
+const int maxn = 10010;
+int n, a[maxn], k;
+int T[maxn],cnt;
+void merge_sort(int *A,int x,int y,int *T,int &cnt)
 {
-	if(x <= 0 || x > n || y <= 0 || y > n || sum >= rxz[x][y]) return;
-	rxz[x][y] = sum;
-	if(x == n && y == n)
+	if(y-x>1)
 	{
-		if(sum < ans) ans = sum;
-		return;
-	}
-	for(int i = 0;i < 4;i++) // 4¸ö£¬·ñÔòRE.
-	{
-		int xx = x + fx[i],yy = y + fy[i];
-		if(a[xx][yy])
+		int m = x+(y-x)/2;
+		int p = x,q = m,i = x;
+		merge_sort(A,x,m,T,cnt);
+		merge_sort(A,m,y,T,cnt);
+                //æ­¤æ—¶å·¦åŠå³åŠéƒ½æœ‰åº
+		while(p<m || q<y)
 		{
-			if(a[xx][yy] == a[x][y])dfs(xx,yy,sum,0);
-			else dfs(xx,yy,sum+1,0);//sum + 1 = ¿Óµã
+			if(q >= y || (p<m && A[p]<=A[q])) T[i++] = A[p++];
+			else {T[i++] = A[q++];cnt += m - p; }
 		}
-		else
-		if(mag == 0)
-			a[xx][yy] = a[x][y],dfs(xx,yy,sum + 2,1),a[xx][yy] = 0;
+		for(int i = x;i < y;i++)A[i] = T[i];
 	}
 }
 int main(void)
 {
-	cin>>n>>m;
-    memset(rxz, 0x7f, sizeof(rxz));
-	for(int i = 0;i < m;i++)
-	{
-		int b,c,d;
-		cin>>b>>c>>d;
-		a[b][c] = d+1;
-	}
-    dfs(1, 1, 0, false);
-    printf("%d", ans==inf ? -1 : ans);
-	return 0;
+	int n;
+	scanf("%d",&n);
+	for(int i = 0;i < n;i++)
+		scanf("%d",a+i);
+	merge_sort(a,0,n,T,cnt);
+	printf("%d",cnt);
 }
