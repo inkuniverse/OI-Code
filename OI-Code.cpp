@@ -1,10 +1,23 @@
 #include <iostream>
 using namespace std;
-int a[]={1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987,1597,2584,4181,6765,10946,17711,
-	28657,46368,75025,121393,196418,317811,514229,832040,1346269,2178309,3524578,5702887,9227465,14930352,
-	24157817,39088169,63245986,102334155,165580141,267914296,433494437,701408733,1134903170,1836311903};
+const int maxn = 11;
+int dp[maxn][maxn];
+int f(int n,int m)//n球m
+{
+	if(dp[n][m])return dp[n][m];
+	if(n < m || m <= 0)return 0;
+	if(m == n)return 1;
+	return dp[n][m] = f(n-1,m-1) +
+						f(n-1,m) * m;
+}
+int omg(int a) //omg = !
+{
+	if(a == 0)return 1;
+	return a * omg(a-1);
+}
 int main(void)
 {
-	int n;cin>>n;
-	cout<<a[n];
+	int n,m;
+	cin>>n>>m;
+	cout<<f(n,m) * omg(m);
 }
