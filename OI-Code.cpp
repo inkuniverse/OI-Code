@@ -1,23 +1,54 @@
 #include <iostream>
+#include <cstring>
 using namespace std;
-const int maxn = 11;
-int dp[maxn][maxn];
-int f(int n,int m)//n球m
+const int MAXN = 5010;
+int n;
+struct Int
 {
-	if(dp[n][m])return dp[n][m];
-	if(n < m || m <= 0)return 0;
-	if(m == n)return 1;
-	return dp[n][m] = f(n-1,m-1) +
-						f(n-1,m) * m;
-}
-int omg(int a) //omg = !
+    int len, s[MAXN];
+    Int()
+    {
+        len = 1;
+        memset(s, 0, sizeof(s));
+    }
+    Int(int num) { *this = num; }
+    Int operator=(const int &num) //开始重载等号,用来赋值
+    {
+        char a[MAXN];
+        sprintf(a, "%d", num); //将整数转成Int型
+        len = strlen(a);
+        for (int i = len - 1; i >= 0; --i)
+            s[i] = a[len - i - 1] - '0';
+        return *this;
+    }
+    Int operator+(const Int &a) //原理与高精加法一样
+    {
+        Int c;
+        c.len = max(len, a.len) + 1;
+        for (int i = 0, x = 0; i < c.len; ++i)
+        {
+            c.s[i] = s[i] + a.s[i] + x;
+            x = c.s[i] / 10;
+            c.s[i] = c.s[i] % 10;
+        }
+        if (c.s[c.len - 1] == 0)
+            --c.len;
+        return c;
+    }
+};
+Int f[MAXN];
+ostream &operator<<(ostream &out, const Int &x)
 {
-	if(a == 0)return 1;
-	return a * omg(a-1);
+    for (int i = x.len - 1; i >= 0; --i)
+        cout << x.s[i];
+    return out;
 }
 int main(void)
 {
-	int n,m;
-	cin>>n>>m;
-	cout<<f(n,m) * omg(m);
+    f[1] = 1;
+    f[2] = 2;
+    cin >> n;
+    for (int i = 3; i <= n; i++)
+        f[i] = f[i - 1] + f[i - 2];
+    cout << f[n];
 }
