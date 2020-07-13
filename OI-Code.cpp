@@ -1,42 +1,46 @@
+#include<cstring>
 #include<iostream>
 #include<algorithm>
-#include<vector>
 #include<cstdio>
 using namespace std;
-int n,m,sum;
-typedef pair<int,int> P;
-vector<P> G[100010];
-
-namespace st1
+const int maxn = 1010,inf = 1e9+7;
+int a[maxn][maxn],n,m,ans = 1e9+7;//1 红 2 黄
+int rxz[maxn][maxn];
+int fx[4] = {-1, 0, 1, 0}; // x偏移量
+int fy[4] = {0, -1, 0, 1}; // y偏移量
+void dfs(int x,int y,int sum,bool mag)
 {
-	bool check(int m)
+	if(x <= 0 || x > n || y <= 0 || y > n || sum >= rxz[x][y]) return;
+	rxz[x][y] = sum;
+	if(x == n && y == n)
 	{
-		int m;
-
+		if(sum < ans) ans = sum;
+		return;
 	}
-	void main()
+	for(int i = 0;i < 4;i++) // 4个，否则RE.
 	{
-		int l = 1,r = sum + 1;
-		while(l < r)
+		int xx = x + fx[i],yy = y + fy[i];
+		if(a[xx][yy])
 		{
-			int m = l+r+1 >> 1;
-			if(check(m)) l = m;
-			else r = m-1;
+			if(a[xx][yy] == a[x][y])dfs(xx,yy,sum,0);
+			else dfs(xx,yy,sum+1,0);//sum + 1 = 坑点
 		}
-		cout<<l;
+		else
+		if(mag == 0)
+			a[xx][yy] = a[x][y],dfs(xx,yy,sum + 2,1),a[xx][yy] = 0;
 	}
 }
-
 int main(void)
 {
-	scanf("%d%d",&n,&m);
-	for(int i = 0;i<n;i++)
+	cin>>n>>m;
+    memset(rxz, 0x7f, sizeof(rxz));
+	for(int i = 0;i < m;i++)
 	{
-		int u,v,w;
-		scanf("%d%d%d",&u,&v,&w);
-		G[u].push_back({v,w});
-		G[v].push_back({u,w});
-		sum += w;
+		int b,c,d;
+		cin>>b>>c>>d;
+		a[b][c] = d+1;
 	}
-    return 0;
+    dfs(1, 1, 0, false);
+    printf("%d", ans==inf ? -1 : ans);
+	return 0;
 }
