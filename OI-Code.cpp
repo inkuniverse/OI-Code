@@ -1,61 +1,45 @@
-#include<cstdio>
-#include<iostream>
-#include<cmath>
-#include<string>
-#include<string>
-#include<algorithm>
+#include <iostream>
+#include <algorithm>
+#include <cstdio>
 using namespace std;
-struct edge
+const int maxn = 1e4+10;
+int f[maxn], n, m, s,t;
+int find(int x)
 {
-    int to;
-    int next;
-}e[200000];
-int head[20000];
-int cnt,black,white;
-void add(int a, int b)
-{
-    cnt++;
-    e[cnt].to = b;
-    e[cnt].next = head[a];
-    head[a] = cnt;
+    if (f[x] == x)
+        return x;
+    return f[x] = find(f[x]);
 }
-bool used[20000];
-int col[20000];
-bool dfs(int node, int color)
+struct road
 {
-    if (used[node])return (col[node] == color);
-    used[node] = true;
-    col[node] = color;
-    if (color) white++; else black++;
-    for (int i = head[node]; i; i = e[i].next)
+    int x,y,t;
+    bool operator<(road b)
     {
-        if(!dfs(e[i].to, 1 - color))return 0;
+        return t < b.t;
     }
-    return 1;
-}
-int main()
+}r[maxn*10];
+
+
+int main(void)
 {
-    int n, m;
-    scanf("%d%d", &n, &m);
-    int a, b;
-    while (m--)
-    {
-        scanf("%d%d", &a, &b);
-        add(a, b);
-        add(b, a);
-    }
-    int ans = 0;
+    scanf("%d%d", &n, &m,&s,&t);
     for (int i = 1; i <= n; i++)
+        f[i] = i;
+    for (int i = 1; i <= m; i++)
     {
-        if (used[i])continue;
-        black = white = 0;
-        if (!dfs(i, 0))
-        {
-            printf("Impossible");
-            return 0;
-        }
-        ans += min(black, white);
+        int x,y,t;
+        cin>>x>>y>>t;
+        r[i].x = x,r[i].y = y,r[i].t = t;
     }
-    printf("%d", ans);
-    return 0;
+    sort(r+1,r+m+1);
+    for(int i = 1;i <= m;i++)
+    {
+        int x = find(r[i].x),y = find(r[i].y);
+        if(x != y)
+        {
+            f[x] = y;
+            if(find(s) == find(t)){cout<<r[i].t;return 0;}
+        }
+    }
+    cout<<-1;
 }
