@@ -1,0 +1,11 @@
+--2020-07-17 09:08:16--  https://raw.staticdn.net/inkuniverse/OI-Code/master/.push.sh
+正在解析主机 raw.staticdn.net (raw.staticdn.net)... 183.131.200.74, 183.131.200.72, 183.131.200.69, ...
+正在连接 raw.staticdn.net (raw.staticdn.net)|183.131.200.74|:443... 已连接。
+已发出 HTTP 请求，正在等待回应... 200 OK
+长度： 39 [text/plain]
+正在保存至: “.push.sh.1”
+
+.push.sh.1                        0%[                                                        ]       0  --.-KB/s               .push.sh.1                      100%[=======================================================>]      39  --.-KB/s    用时 0s    
+
+2020-07-17 09:08:17 (607 KB/s) - 已保存 “.push.sh.1” [39/39])
+
