@@ -1,37 +1,43 @@
-#include<bits/stdc++.h>
+#include<iostream>
 using namespace std;
-class Solution {
-    int str[256];
-    vector<int> G[int(1e5+10)];
-    int fa[int(1e5+10)];
-    vector<int> ans;
-    int aa[int(1e5+10)][256];
-    string label;
-public:
-    int count(int u,char color)
-    {
-        if(aa[u][color])return aa[u][color];
-        int ans = (label[u] == color);
-        for(auto v : G[u])
-            if(v != fa)
-                ans += count(v,color);
-        return aa[u][color] = ans;
-    }
-    void dfs(int u)
-    {
-        for(auto v : G[u])
-            if(v != fa[u])
-                fa[v] = u,dfs(v);
-    }
-    vector<int> countSubTrees(int n, vector<vector<int> >& edges, string labels) {
-        for(auto i : edges)
-            G[i[0]].push_back(i[1]),G[i[1]].push_back(i[0]);
-        label = labels;
-        fa[0] = -1;
-        dfs(0);
-        for(int i = 0;i < n;i++)
-            ans.push_back(count(i,label[i]));
-        return ans;
-    }
-};
-int main(){}
+vector<int> G[N];
+int siz[N],son[N],dfn[N],cnt,top[N],fa[N],d[N];
+void dfs1(int x)
+{
+	siz[x] = 1;
+	for(auto y:G[x])
+		if(y!=fa[x])fa[y]=x,d[y] = d[x] + 1,dfs1(y,x),siz[x] += siz[y];
+	int mx = 0;
+	for(auto y:G[x])
+		if(y!=fa[x]) if(mx<siz[y])mx=siz[y],son[x] = y;
+}
+void dfs2(int x,int pa){
+	dfn[x] = ++cnt;
+	if(son[x])
+	{
+		top[son[x]] = top[x];
+		dfs2(son[x],x);
+	}
+	for(auto y:G[x])if(y!=fa[x] && y!=son[x])
+	{
+		top[y] = y;
+		dfs2(y,x);
+	}
+}
+int lca(int x,int y)
+{
+	while(top(x) != top(y)){
+		if(d[top[x]] < d[top[y]])swap(x,y);
+		x = fa[top[x]];
+	}
+	if(d[x]<d[y])return x;
+	else return y;
+}
+int main()
+{
+	inp();
+	fa[1] = -1;
+	dfs1(1);
+	top[1] = 1;
+	dfs2(1);
+}
