@@ -1,31 +1,89 @@
 #include<iostream>
-#include<cstdio>
-#include<cmath>
-#include<algorithm>
 #include<cstring>
+#include<algorithm>
+#include<cstdio>
+#include<queue>
 using namespace std;
-const int maxn=2e5+50,maxm=2100,mod=1e9+7,S=2050;
-typedef long long long long;
-long long N,a[maxn],b[maxn],mul[maxm<<2],invv[maxm<<2],f[maxm<<1][maxm<<1],ans=0;
-inline long long qpow(long long a,long long b){long long res=1;while(b){if(b&1) res=(res*a)%mod;b>>=1;a=(a*a)%mod;}return res;}//ksm
-inline long long inv(long long x){return qpow(x,mod-2)%mod;}//求逆元 
-inline long long C(long long n,long long m){return mul[n]*invv[n-m]%mod*invv[m]%mod;}//求组合数 
+const int maxn = 10010, maxm = (maxn+1e5) * 2, inf = 1e8;
+int n,m,S,T,sc,tc;
+int h[maxn],e[maxm],ne[maxm],f[maxm],idx;
+int cur[maxn],d[maxn];
+queue<int> q;
+void add(int u,int v,int w)
+{
+    e[idx] = v; f[idx] = w;ne[idx] = h[u];h[u] = idx++;
+    e[idx] = u; f[idx] = 0;ne[idx] = h[v];h[v] = idx++;
+}
+bool bfs()
+{
+    q = queue<int>();
+    memset(d, -1, sizeof d);
+    q.push(S);d[S] = 0;cur[S] = h[S];
+    while(!q.empty())
+    {
+        int u = q.front();q.pop();
+        for(int i = h[u];~i;i=ne[i])
+        {
+            int v = e[i];
+            if(d[v] == -1 && f[i])
+            {
+                d[v] = d[u] + 1;
+                cur[v] = h[v];
+                if(v == T)return true;
+                q.push(v);
+            }
+        }
+    }
+    return false;
+}
+
+int find(int u,int limit)
+{
+    if(u == T) return limit;
+    int flow = 0;
+    for(int i = cur[u];~i && flow < limit;i = ne[i])
+    {
+        cur[u] = i;
+        int v = e[i];
+        if(d[v] == d[u] + 1 && f[i])
+        {
+            int t = find(v,min(f[i],limit - flow));
+            if(!t) d[v] = -1;
+            f[i] -= t;f[i^1] += t;flow += t;
+        }
+    }
+    return flow;
+}
+
+int dinic()
+{
+    int r = 0,flow;
+    while(bfs())while(flow = find(S,inf))r += flow;
+    return r;
+}
+
 int main()
 {
-	memset(f,0,sizeof(f));
-	scanf("%lld",&N);
-	for(long long i=1;i<=N;i++) scanf("%lld%lld",&a[i],&b[i]),f[S-a[i]][S-b[i]]++; 
-	mul[0]=1,invv[0]=inv(mul[0]);
-	for(long long i=1;i<=8000;i++) mul[i]=mul[i-1]*i%mod,invv[i]=inv(mul[i]);
-	for(long long i=1;i<=S*2;i++)//dp 
-		for( long long j=1;j<=S*2;j++)
-			f[i][j]=(f[i][j]+(f[i-1][j]+f[i][j-1])%mod)%mod;
-	for(long long i=1;i<=N;i++)
-		//ans=(ans+f[S+a[i]][S+b[i]])%mod;
-		//ans=(ans-C(2*a[i]+2*b[i],2*a[i]))%mod;
-		//ans=(ans%mod+mod)%mod;//防止ans为负数 
-		ans = ((((ans+f[S+a[i]][S+b[i]])%mod)-C(2*a[i]+2*b[i],2*b[i]))%mod + mod)%mod;
-	ans=(ans*500000004)%mod;
-	printf("%lld\n",ans);
-	return 0;
+    memset(h,-1,sizeof h);
+    scanf("%d%d%d%d",&n,&m,&sc,&tc);
+    S = 0;T = n+1;
+    while(sc--)
+    {
+        int t;
+        scanf("%d",&t);
+        add(S,t,inf);
+    }
+    while(tc--)
+    {
+        int t;
+        scanf("%d",&t);
+        add(t,T,inf);
+    }
+    while(m--)
+    {
+        int u,v,w;
+        scanf("%d%d%d",&u,&v,&w);
+        add(u,v,w);
+    }
+    printf("%d\n",dinic());
 }
