@@ -61,7 +61,6 @@ int dinic()
     while(bfs())while(flow = find(S,inf))r += flow;
     return r;
 }
-
 int main()
 {
     memset(h,-1,sizeof h);
