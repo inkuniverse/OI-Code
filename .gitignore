@@ -1,3 +1,5 @@
 .vscode/
 OI-Code.exe
 OI-Code
+*.exe
+main

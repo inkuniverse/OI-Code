@@ -14,11 +14,16 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: build
-      run: g++ ./OI-Code.cpp -o OI-Code
+      run: g++ ./main.cc -o main
     - name: check
-      run: ls
+      run: ls > list
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2
       with: 
-        name: OI-Code
-        path: ./OI-Code
+        name: main
+        path: ./main
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2
+      with: 
+        name: list
+        path: ./list
