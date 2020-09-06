@@ -16,14 +16,9 @@ jobs:
     - name: build
       run: g++ ./main.cc -o main
     - name: check
-      run: ls > list
+      run: ls
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2
       with: 
         name: main
         path: ./main
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2
-      with: 
-        name: list
-        path: ./list
