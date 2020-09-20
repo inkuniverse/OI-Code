@@ -1,25 +1,21 @@
+
+0
+
+
 #include<iostream>
 #include<algorithm>
 #include<cstdio>
 #include<cstring>
 using namespace std;
-
-const int N = 500010;
-
-int root[N], p[N];
-int find(int x)
-{
-    if(x == p[x])return x;
-    return p[x] = find(p[x]);
-}
-
-int n, m, idx;
+int n, mn;
+const int N = 100010, oo = 1e9 + 7;
+int delta, root, idx;
 struct Node
 {
-    int p, s[2], size, v, id;
-    void init(int _v,int _id,int _p)
+    int s[2], p, size, v;
+    void init(int in_v,int in_p)
     {
-        p = _p, v = _v, size = 1, id = _id;
+        v = in_v, p = in_p, size = 1;
     }
 }tr[N];
 
@@ -38,7 +34,7 @@ void rotate(int x)
     pushup(y), pushup(x);
 }
 
-void splay(int x,int k,int b)
+void splay(int x,int k)
 {
     while(tr[x].p != k)
     {
@@ -50,84 +46,81 @@ void splay(int x,int k,int b)
         }
         rotate(x);
     }
-    if(!k) root[b] = x;
+    if(!k) root = x;
 }
 
-void insert(int v,int id,int b)
+int insert(int v)
 {
-    int u = root[b], p = 0;
-    while(u) p = u, u = tr[u].s[tr[u].v < v];
+    int u = root, p = 0;
+    while(u) p = u, u = tr[u].s[v > tr[u].v];
     u = ++idx;
-    if(p) tr[p].s[tr[p].v < v] = u;
-    tr[u].init(v, id, p);
-    splay(u, 0, b);
+    if(p) tr[p].s[v > tr[p].v] = u;
+    tr[u].init(v, p);
+    splay(u, 0);
+    return u;
 }
 
-int kth(int k,int b)
+int get(int v)
 {
-    int u = root[b];
-    while(u)
+    int u = root, res;
+    while (u)
     {
-        if(tr[tr[u].s[0]].size >= k) u = tr[u].s[0];
-        else if(tr[tr[u].s[0]].size + 1 == k) return u;
-        else k -= tr[tr[u].s[0]].size + 1, u = tr[u].s[1];
+        if (tr[u].v >= v) res = u, u = tr[u].s[0];
+        else u = tr[u].s[1];
     }
-    puts("-1");
-    return -1;
+    return res;
 }
 
-void dfs(int u, int v)
+int kth(int u, int k)
 {
-    if(tr[u].s[0]) dfs(tr[u].s[0], v);
-    if(tr[u].s[1]) dfs(tr[u].s[1], v);
-    insert(tr[u].v, tr[u].id, v); 
+    if(k <= tr[tr[u].s[0]].size) return kth(tr[u].s[0], k);
+    else if(k == tr[tr[u].s[0]].size + 1) return u;
+    else return kth(tr[u].s[1], k - tr[tr[u].s[0]].size - 1);
+}
+
+void deleteNode(int L,int R)//删除 (L,R) //注意开区间
+{
+    splay(L, 0);
+    splay(R, L);
+    tr[R].s[0] = 0;
+    pushup(R), pushup(L);
+    // splay(R, 0);
+    // splay(L, R);
+    // tr[L].s[1] = 0;
+    // pushup(L), pushup(R);
 }
 
 int main(void)
 {
-    scanf("%d%d", &n, &m);
+    scanf("%d%d", &n, &mn);
+    int tot = 0;
+    int L = insert(-oo); insert(+oo);
     for(int i = 1;i <= n;i++)
     {
-        p[i] = root[i] = i;
-        int v;
-        scanf("%d", &v);
-        tr[i].init(v, i, 0);
-    }
-    idx = n;
-    for(int i = 1;i <= m;i++)
-    {
-        int u, v;
-        scanf("%d%d", &u, &v);
-        u = find(u), v = find(v);
-        if(u != v)
+        char op[2];int s;
+        scanf("%s%d", op, &s);
+        char c = *op;
+        if(c == 'I')
         {
-            if(tr[root[u]].size > tr[root[v]].size) swap(u, v);
-            dfs(root[u], v);
-            p[u] = v;
+            if(s < mn) continue;
+                s -= delta, insert(s), tot++;
+        }
+        else if(c == 'A')
+        {
+            delta += s;
+        }
+        else if(c == 'S')
+        {
+            delta -= s;
+            int R = get(mn - delta);
+            deleteNode(L, R);
+        }
+        else if(c == 'F')
+        {
+            if (tr[root].size - 2 < s) puts("-1");
+            //printf("%d\n", tr[kth(root, s)].v + delta);
+            else printf("%d\n", tr[kth(root, tr[root].size - s)].v + delta);
         }
     }
-    int q;
-    scanf("%d", &q);
-    for(int i = 1; i <= q; i++)
-    {
-        char op[2];
-        int a, b;
-        scanf("%s%d%d", op, &a, &b);
-        if(*op == 'B')
-        {
-            a = find(a), b = find(b);
-            if(a != b)
-            {
-                if(tr[root[a]].size > tr[root[b]].size)swap(a,b);
-                dfs(root[a], b);
-                p[a] = b;
-            }
-        }
-        else if(*op == 'Q')
-        {
-            a = find(a);
-            if (tr[root[a]].size < b) puts("-1");
-            else printf("%d\n", tr[kth(b, a)].id);
-        }
-    }
+    printf("%d\n", tot - (tr[root].size - 2));
 }
