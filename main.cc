@@ -27,17 +27,10 @@ int calckth(int k) // k 小
     return v;
 }
 
-int calc(int x) // 计算最高位
-{
-    int i = 0;
-    for(;x;++i, x /= 2);
-    return i;
-}
 int add(int x)
 {
     for(int i = n; i; --i)
-        if(calc(p[i]) == calc(x))
-            x ^= p[i];
+        x = min(x, x ^ p[i]);
     if(x)
     {
         p[++n] = x;
