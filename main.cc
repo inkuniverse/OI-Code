@@ -1,39 +1,37 @@
-#include<bits/stdc++.h>
+#include<iostream>
+#include<vector>
 using namespace std;
 
-// 线性基 (p)
-int p[1000010], n;
-int calcmax()
+template<class T, class VAL>
+T lowerbound(T begin, T end, VAL val)
 {
-    sort(p + 1, p + n + 1, greater<int>());
-    int v = 0;
-    for(int i = 1; i <= n; i++)
-        v = max(v, v ^ p[i]);
-    return v;
+	T l = begin, r = end; if(r != begin) r--; else return l;
+	while(l < r)
+	{
+		T mid = l + (r - l) / 2;
+		if(*mid >= val) r = mid;
+		else {l = mid; l++;}
+	}
+	return l;
 }
 
-int calckth(int k) // k 小
+template<class T, class VAL>
+T upperbound(T begin, T end, VAL val)
 {
-    sort(p + 1, p + n + 1, greater<int>());
-    k += 1; // 否则会算入0
-    int v = 0;
-    for(int i = 1; i <= n; i++)
-    {
-        int v1 = v ^ p[i];
-        if(v > v1) swap(v, v1);
-        if(k > 1 << (n - i))
-            v = v1, k -= 1 << (n - i);
-    }
-    return v;
+	T l = begin, r = end; if(r != begin) r--; else return l;
+	while(l < r)
+	{
+		T mid = l + (r - l) / 2;
+		if(*mid > val) r = mid;
+		else {l = mid; l++;}
+	}
+	return l;
 }
 
-int add(int x)
+vector<int> a = {1, 2, 3, 5, 6};
+int main(void)
 {
-    for(int i = n; i; --i)
-        x = min(x, x ^ p[i]);
-    if(x)
-    {
-        p[++n] = x;
-        sort(p + 1, p + n + 1);
-    }
-}
+	cout << *lowerbound(a.begin(), a.end(), 5) << endl;
+	cout << *upperbound(a.begin(), a.end(), 5);
+	return 0; 
+} 
